@@ -3,75 +3,56 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Puget Sound Estuarium | Program Finder</title>
+  <title>EEP Program Finder</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="site-header">
-    <div class="container">
-      <div class="brand">
-        <div class="brand__title" id="orgName">Puget Sound Estuarium</div>
-        <div class="brand__subtitle" id="pageTitle">K–12 Program Finder</div>
-      </div>
-      <div class="header-actions">
-        <a class="btn btn--primary" id="ctaEstimate" href="#estimate">Get an Estimate</a>
-        <a class="btn btn--ghost" id="ctaInquiry" href="#inquire">Request Booking</a>
-      </div>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-title">Puget Sound Estuarium</div>
+      <div class="brand-subtitle">EEP Program Finder</div>
+    </div>
+
+    <div class="search-wrap">
+      <label class="sr-only" for="q">Search programs</label>
+      <input id="q" type="search" placeholder="Search by program name or keyword" autocomplete="off" />
+      <button id="clearAll" class="btn btn-ghost" type="button">Clear all</button>
     </div>
   </header>
 
-  <main class="container">
-    <section class="intro">
-      <h1>Find the right program fast</h1>
-      <p>Select a grade band and format. You will see matching programs instantly.</p>
-    </section>
+  <main class="layout">
+    <aside class="filters" aria-label="Filters">
+      <h2>Filter</h2>
 
-    <section class="finder" aria-label="Program Finder">
-      <div class="filters" role="region" aria-label="Filters">
-        <div class="filters__row">
-          <div class="filter-block">
-            <div class="filter-label">Grade band</div>
-            <div class="chip-row" id="gradeChips" aria-label="Grade filters"></div>
-          </div>
-          <div class="filter-block">
-            <div class="filter-label">Format</div>
-            <div class="chip-row" id="formatChips" aria-label="Format filters"></div>
-          </div>
-        </div>
+      <section class="filter-block">
+        <h3>Grade band</h3>
+        <div class="chip-grid" id="gradeFilters"></div>
+      </section>
 
-        <div class="filters__row filters__row--secondary">
-          <label class="toggle">
-            <input type="checkbox" id="toggleCommunity" />
-            <span>Include community and adult programs</span>
-          </label>
+      <section class="filter-block">
+        <h3>Format</h3>
+        <div class="chip-grid" id="formatFilters"></div>
+      </section>
 
-          <div class="search">
-            <label class="sr-only" for="searchBox">Search programs</label>
-            <input id="searchBox" type="search" placeholder="Search by program name" />
-          </div>
+      <section class="filter-block">
+        <h3>Pillar</h3>
+        <div class="chip-grid" id="pillarFilters"></div>
+      </section>
 
-          <button class="btn btn--small btn--ghost" id="clearBtn" type="button">Clear filters</button>
-        </div>
+      <section class="filter-block">
+        <h3>Tags</h3>
+        <div class="chip-grid" id="tagFilters"></div>
+      </section>
+    </aside>
 
-        <div class="summary" id="summary" aria-live="polite"></div>
+    <section class="results" aria-label="Results">
+      <div class="results-head">
+        <div id="resultsCount" class="results-count">Loading…</div>
+        <div id="activeChips" class="active-chips" aria-label="Active filters"></div>
       </div>
 
-      <div class="results" id="results" aria-label="Results list"></div>
+      <div id="cards" class="cards" aria-live="polite"></div>
     </section>
-
-    <section class="howto">
-      <h2>How to book</h2>
-      <ol>
-        <li>Use the finder to confirm program fit.</li>
-        <li>Click “Get an Estimate” if you want a quick cost range.</li>
-        <li>Click “Request Booking” when you are ready for scheduling and logistics.</li>
-      </ol>
-      <p class="note">If you do not see a perfect match, request booking and ask for a custom configuration.</p>
-    </section>
-
-    <footer class="site-footer">
-      <div class="small">Explore • Connect • Inspire</div>
-    </footer>
   </main>
 
   <script src="app.js"></script>
