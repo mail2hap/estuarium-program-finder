@@ -64,16 +64,14 @@
       },
       "notes": {}
     },
-    {
-      "name": "SoundQuest",
-      "grades": "8–10, 10–12",
-      "category": "School",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
+  {
+  "id": "soundquest",
+  "name": "SoundQuest",
+  "grades": ["8-10", "10-12"],
+  "formats": ["10-week", "4-week", "5-day", "1-day"],
+  "type": "K–12",
+  "blurb": "Queer-inclusive estuary science blending identity, leadership, and ecology."
+}
       "notes": {}
     },
     {
