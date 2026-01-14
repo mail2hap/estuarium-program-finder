@@ -1,221 +1,219 @@
-const state = {
-  q: "",
-  grades: new Set(),
-  formats: new Set(),
-  pillars: new Set(),
-  tags: new Set()
-};
-
 const els = {
-  q: document.getElementById("q"),
-  clearAll: document.getElementById("clearAll"),
-  gradeFilters: document.getElementById("gradeFilters"),
-  formatFilters: document.getElementById("formatFilters"),
-  pillarFilters: document.getElementById("pillarFilters"),
-  tagFilters: document.getElementById("tagFilters"),
-  cards: document.getElementById("cards"),
-  resultsCount: document.getElementById("resultsCount"),
-  activeChips: document.getElementById("activeChips")
+  gradeChips: document.getElementById("gradeChips"),
+  formatChips: document.getElementById("formatChips"),
+  toggleCommunity: document.getElementById("toggleCommunity"),
+  searchBox: document.getElementById("searchBox"),
+  clearBtn: document.getElementById("clearBtn"),
+  summary: document.getElementById("summary"),
+  results: document.getElementById("results"),
 };
 
-let programs = [];
+const state = {
+  grade: null,
+  format: null,
+  includeCommunity: false,
+  q: "",
+};
+
+let rawPrograms = [];
+
+const GRADE_ORDER = ["PreK-K","K-2","3-5","6-8","8-10","9-12","10-12","Adult","All Ages","13+"];
+
+function asArray(v){
+  if (!v) return [];
+  if (Array.isArray(v)) return v.filter(Boolean);
+  return [v].filter(Boolean);
+}
+
+function pick(obj, keys){
+  for (const k of keys){
+    if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
+  }
+  return undefined;
+}
+
+function normalizeProgram(p){
+  const name = pick(p, ["name","programName","title"]) || "Untitled program";
+  const blurb = pick(p, ["blurb","summary","description","shortDescription"]) || "";
+  const grades = asArray(pick(p, ["grades","gradeBands","gradeBand","grade_band"]));
+  const formats = asArray(pick(p, ["formats","format","deliveryFormats","delivery"]));
+  const type = (pick(p, ["type","audience","audienceType","category"]) || "").toString();
+
+  // Decide if program is “community/adult” in a flexible way
+  const isCommunity = (
+    /adult|community|public|member/i.test(type) ||
+    grades.some(g => /adult|all ages|13\+/i.test(String(g)))
+  );
+
+  return {
+    id: pick(p, ["id","slug"]) || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    name,
+    blurb,
+    grades: grades.map(String),
+    formats: formats.map(String),
+    type: type || (isCommunity ? "Community/Adult" : "K–12"),
+    isCommunity,
+    // Optional URLs if you have them in data.json
+    estimateUrl: pick(p, ["estimateUrl","estimate_url"]),
+    inquiryUrl: pick(p, ["inquiryUrl","inquiry_url"]),
+  };
+}
 
 function uniqSorted(arr){
-  return [...new Set(arr)].filter(Boolean).sort((a,b)=>a.localeCompare(b));
+  const set = new Set(arr.filter(Boolean));
+  const out = [...set];
+  out.sort((a,b) => {
+    const ai = GRADE_ORDER.indexOf(a);
+    const bi = GRADE_ORDER.indexOf(b);
+    if (ai !== -1 || bi !== -1){
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    }
+    return a.localeCompare(b);
+  });
+  return out;
 }
 
-function makeChip(label, pressed, onClick){
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "chip";
-  btn.textContent = label;
-  btn.setAttribute("aria-pressed", pressed ? "true" : "false");
-  btn.addEventListener("click", onClick);
-  return btn;
+function chip(label, pressed, onClick){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "chip";
+  b.textContent = label;
+  b.setAttribute("aria-pressed", pressed ? "true" : "false");
+  b.addEventListener("click", onClick);
+  return b;
 }
 
-function renderFilterChips(){
-  // Derive options from data
-  const gradeOptions = uniqSorted(programs.flatMap(p => p.grades || []));
-  const formatOptions = uniqSorted(programs.flatMap(p => p.formats || []));
-  const pillarOptions = uniqSorted(programs.map(p => p.pillar));
-  const tagOptions = uniqSorted(programs.flatMap(p => p.tags || []));
+function renderFilters(programs){
+  const grades = uniqSorted(programs.flatMap(p => p.grades));
+  const formats = uniqSorted(programs.flatMap(p => p.formats));
 
-  els.gradeFilters.innerHTML = "";
-  gradeOptions.forEach(g => {
-    els.gradeFilters.appendChild(
-      makeChip(g, state.grades.has(g), () => toggleSet(state.grades, g))
+  els.gradeChips.innerHTML = "";
+  grades.forEach(g => {
+    els.gradeChips.appendChild(
+      chip(g, state.grade === g, () => {
+        state.grade = (state.grade === g) ? null : g;
+        render();
+      })
     );
   });
 
-  els.formatFilters.innerHTML = "";
-  formatOptions.forEach(f => {
-    els.formatFilters.appendChild(
-      makeChip(f, state.formats.has(f), () => toggleSet(state.formats, f))
+  els.formatChips.innerHTML = "";
+  formats.forEach(f => {
+    els.formatChips.appendChild(
+      chip(f, state.format === f, () => {
+        state.format = (state.format === f) ? null : f;
+        render();
+      })
     );
   });
-
-  els.pillarFilters.innerHTML = "";
-  pillarOptions.forEach(p => {
-    els.pillarFilters.appendChild(
-      makeChip(p, state.pillars.has(p), () => toggleSet(state.pillars, p))
-    );
-  });
-
-  els.tagFilters.innerHTML = "";
-  tagOptions.forEach(t => {
-    els.tagFilters.appendChild(
-      makeChip(t, state.tags.has(t), () => toggleSet(state.tags, t))
-    );
-  });
-}
-
-function toggleSet(set, value){
-  if (set.has(value)) set.delete(value);
-  else set.add(value);
-  render();
-}
-
-function clearAll(){
-  state.q = "";
-  state.grades.clear();
-  state.formats.clear();
-  state.pillars.clear();
-  state.tags.clear();
-  els.q.value = "";
-  render();
 }
 
 function matchesQuery(p){
   if (!state.q) return true;
-  const hay = [
-    p.name, p.pillar, p.audience, p.blurb,
-    ...(p.grades || []),
-    ...(p.formats || []),
-    ...(p.tags || [])
-  ].join(" ").toLowerCase();
+  const hay = [p.name, p.blurb, p.type, ...p.grades, ...p.formats].join(" ").toLowerCase();
   return hay.includes(state.q.toLowerCase());
 }
 
-function matchesSetOrEmpty(itemValues, selectedSet){
-  if (selectedSet.size === 0) return true;
-  const vals = new Set(itemValues || []);
-  for (const s of selectedSet){
-    if (vals.has(s)) return true; // OR within category
-  }
-  return false;
-}
-
-function matchesProgram(p){
-  if (!matchesQuery(p)) return false;
-  if (!matchesSetOrEmpty(p.grades, state.grades)) return false;
-  if (!matchesSetOrEmpty(p.formats, state.formats)) return false;
-  if (state.pillars.size > 0 && !state.pillars.has(p.pillar)) return false;
-  if (!matchesSetOrEmpty(p.tags, state.tags)) return false;
-  return true;
-}
-
-function renderActiveChips(){
-  els.activeChips.innerHTML = "";
-
-  const add = (label, onRemove) => {
-    const b = makeChip(label, true, onRemove);
-    b.title = "Remove filter";
-    els.activeChips.appendChild(b);
-  };
-
-  if (state.q) add(`Search: ${state.q}`, () => { state.q=""; els.q.value=""; render(); });
-  [...state.grades].forEach(g => add(g, () => { state.grades.delete(g); render(); }));
-  [...state.formats].forEach(f => add(f, () => { state.formats.delete(f); render(); }));
-  [...state.pillars].forEach(p => add(p, () => { state.pillars.delete(p); render(); }));
-  [...state.tags].forEach(t => add(t, () => { state.tags.delete(t); render(); }));
-}
-
-function renderCards(list){
-  els.cards.innerHTML = "";
-
-  list.forEach(p => {
-    const card = document.createElement("article");
-    card.className = "card";
-
-    const h = document.createElement("h4");
-    h.textContent = p.name;
-
-    const blurb = document.createElement("p");
-    blurb.textContent = p.blurb || "";
-
-    const meta = document.createElement("div");
-    meta.className = "meta";
-
-    meta.appendChild(pill(`Pillar: ${p.pillar}`, "pillar"));
-    (p.grades || []).forEach(g => meta.appendChild(pill(g, "grade")));
-    (p.formats || []).forEach(f => meta.appendChild(pill(f, "format")));
-
-    const actions = document.createElement("div");
-    actions.className = "actions";
-
-    // Replace these URLs with your real endpoints if desired
-    const estimate = document.createElement("a");
-    estimate.className = "btn";
-    estimate.href = "#estimate";
-    estimate.textContent = "Estimate";
-
-    const inquire = document.createElement("a");
-    inquire.className = "btn btn-ghost";
-    inquire.href = "#inquire";
-    inquire.textContent = "Inquire";
-
-    actions.appendChild(estimate);
-    actions.appendChild(inquire);
-
-    card.appendChild(h);
-    card.appendChild(blurb);
-    card.appendChild(meta);
-    card.appendChild(actions);
-
-    els.cards.appendChild(card);
+function filterPrograms(programs){
+  return programs.filter(p => {
+    if (!state.includeCommunity && p.isCommunity) return false;
+    if (state.grade && !p.grades.includes(state.grade)) return false;
+    if (state.format && !p.formats.includes(state.format)) return false;
+    if (!matchesQuery(p)) return false;
+    return true;
   });
+}
 
+function card(p){
+  const aEstimate = (p.estimateUrl || "#estimate");
+  const aInquiry = (p.inquiryUrl || "#inquire");
+
+  const el = document.createElement("article");
+  el.className = "card";
+  el.innerHTML = `
+    <h3>${escapeHtml(p.name)}</h3>
+    <p>${escapeHtml(p.blurb || "")}</p>
+    <div class="meta">
+      ${(p.type ? `<span class="pill pill--type">${escapeHtml(p.type)}</span>` : "")}
+      ${p.grades.map(g => `<span class="pill pill--grade">${escapeHtml(g)}</span>`).join("")}
+      ${p.formats.map(f => `<span class="pill pill--format">${escapeHtml(f)}</span>`).join("")}
+    </div>
+    <div class="actions">
+      <a class="btn btn--primary" href="${escapeAttr(aEstimate)}">Get an Estimate</a>
+      <a class="btn btn--ghost" href="${escapeAttr(aInquiry)}">Request Booking</a>
+    </div>
+  `;
+  return el;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+function render(){
+  // Use full set for filters, but optionally restrict if community is off
+  const universe = state.includeCommunity ? rawPrograms : rawPrograms.filter(p => !p.isCommunity);
+  renderFilters(universe);
+
+  const list = filterPrograms(rawPrograms);
+
+  const parts = [];
+  if (state.grade) parts.push(`Grade: ${state.grade}`);
+  if (state.format) parts.push(`Format: ${state.format}`);
+  if (state.q) parts.push(`Search: "${state.q}"`);
+  if (state.includeCommunity) parts.push(`Including community/adult`);
+
+  els.summary.textContent = `${list.length} match${list.length === 1 ? "" : "es"}${parts.length ? " • " + parts.join(" • ") : ""}`;
+
+  els.results.innerHTML = "";
   if (list.length === 0){
     const empty = document.createElement("div");
     empty.className = "card";
-    empty.innerHTML = "<h4>No matches</h4><p>Try clearing a filter or using a broader search.</p>";
-    els.cards.appendChild(empty);
+    empty.innerHTML = `<h3>No matches</h3><p>Try clearing a filter or using a broader search.</p>`;
+    els.results.appendChild(empty);
+    return;
   }
+
+  list.forEach(p => els.results.appendChild(card(p)));
 }
 
-function pill(text, kind){
-  const s = document.createElement("span");
-  s.className = `pill ${kind}`;
-  s.textContent = text;
-  return s;
-}
+function clearAll(){
+  state.grade = null;
+  state.format = null;
+  state.q = "";
+  state.includeCommunity = false;
 
-function render(){
-  renderFilterChips();
-  renderActiveChips();
+  els.searchBox.value = "";
+  els.toggleCommunity.checked = false;
 
-  const filtered = programs.filter(matchesProgram);
-  els.resultsCount.textContent = `${filtered.length} program${filtered.length === 1 ? "" : "s"} match`;
-
-  renderCards(filtered);
+  render();
 }
 
 async function init(){
-  const res = await fetch("programs.json", { cache: "no-store" });
-  programs = await res.json();
+  const res = await fetch("data.json", { cache: "no-store" });
+  const data = await res.json();
 
-  els.q.addEventListener("input", (e) => {
+  const list = Array.isArray(data) ? data : (data.programs || []);
+  rawPrograms = list.map(normalizeProgram);
+
+  // Controls
+  els.toggleCommunity.addEventListener("change", (e) => {
+    state.includeCommunity = !!e.target.checked;
+    render();
+  });
+
+  els.searchBox.addEventListener("input", (e) => {
     state.q = e.target.value.trim();
     render();
   });
 
-  els.clearAll.addEventListener("click", clearAll);
+  els.clearBtn.addEventListener("click", clearAll);
 
   render();
 }
 
 init().catch(err => {
-  els.resultsCount.textContent = "Failed to load programs.json";
+  els.summary.textContent = "Failed to load data.json";
   console.error(err);
 });
