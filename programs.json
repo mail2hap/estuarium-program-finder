@@ -1,0 +1,243 @@
+[
+  {
+    "id": "sound-sprouts",
+    "name": "Sound Sprouts",
+    "pillar": "ELI",
+    "audience": "Caregiver + Child",
+    "grades": ["PreK"],
+    "formats": ["10-week", "4-week", "1-day"],
+    "tags": ["early-learning", "sensory", "place-based"],
+    "blurb": "A caregiver-based early learning program focused on sensory exploration and estuary wonder."
+  },
+  {
+    "id": "little-sound-scouts",
+    "name": "Little Sound Scouts",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["K-2"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["early-learning", "field", "observation"],
+    "blurb": "Nature adventures that build observation skills and foundational estuary concepts."
+  },
+  {
+    "id": "sound-naturalists",
+    "name": "Sound Naturalists",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["3-5"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["field", "id-skills", "investigation"],
+    "blurb": "Field investigations for upper elementary learners that build science confidence and ID skills."
+  },
+  {
+    "id": "eco-navigators",
+    "name": "Eco Navigators",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["6-8"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["field", "stewardship", "systems"],
+    "blurb": "Middle school environmental STEM with navigation tools, sampling, and teamwork."
+  },
+  {
+    "id": "echo-sounders",
+    "name": "Echo Sounders",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["8-10"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["community-science", "data", "leadership"],
+    "blurb": "Inclusive field science and collaborative data collection that builds leadership readiness."
+  },
+  {
+    "id": "soundquest",
+    "name": "SoundQuest",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["8-10", "10-12"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["belonging", "leadership", "field"],
+    "blurb": "Queer-inclusive estuary science blending identity, leadership, and ecology."
+  },
+  {
+    "id": "sound-discovery",
+    "name": "Sound Discovery",
+    "pillar": "SoundPath Add-on",
+    "audience": "Youth",
+    "grades": ["9-12"],
+    "formats": ["add-on"],
+    "tags": ["add-on", "field"],
+    "blurb": "An add-on experience that deepens high school learning with additional investigation."
+  },
+  {
+    "id": "sound-scholars",
+    "name": "Sound Scholars",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["10-12"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["advanced", "research", "mentorship"],
+    "blurb": "Advanced fieldwork, research, mentorship, and science communication for grades 10–12."
+  },
+  {
+    "id": "sound-trekkers",
+    "name": "Sound Trekkers",
+    "pillar": "EAN",
+    "audience": "Adult",
+    "grades": ["Adult"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["adult", "community-science", "restoration"],
+    "blurb": "Adult immersion in estuarine ecology, systems thinking, and stewardship."
+  },
+  {
+    "id": "our-sound-selves",
+    "name": "Our Sound Selves",
+    "pillar": "EAN",
+    "audience": "Adult",
+    "grades": ["Adult"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["adult", "reflection", "story"],
+    "blurb": "Science and reflection for adult wellbeing and deeper connection to place."
+  },
+  {
+    "id": "soundroots",
+    "name": "SoundRoots",
+    "pillar": "ESI",
+    "audience": "All Ages",
+    "grades": ["All Ages"],
+    "formats": [],
+    "tags": ["stewardship", "community", "all-ages"],
+    "blurb": "Community stewardship experiences designed for broad participation."
+  },
+  {
+    "id": "soundcore-exchange-network",
+    "name": "SoundCore Exchange Network",
+    "pillar": "ESI",
+    "audience": "13+",
+    "grades": ["13+"],
+    "formats": ["monthly"],
+    "tags": ["story", "civic-dialogue", "community"],
+    "blurb": "A monthly themed exchange connecting stories, stewardship, and community reflection."
+  }
+][
+  {
+    "id": "sound-sprouts",
+    "name": "Sound Sprouts",
+    "pillar": "ELI",
+    "audience": "Caregiver + Child",
+    "grades": ["PreK"],
+    "formats": ["10-week", "4-week", "1-day"],
+    "tags": ["early-learning", "sensory", "place-based"],
+    "blurb": "A caregiver-based early learning program focused on sensory exploration and estuary wonder."
+  },
+  {
+    "id": "little-sound-scouts",
+    "name": "Little Sound Scouts",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["K-2"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["early-learning", "field", "observation"],
+    "blurb": "Nature adventures that build observation skills and foundational estuary concepts."
+  },
+  {
+    "id": "sound-naturalists",
+    "name": "Sound Naturalists",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["3-5"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["field", "id-skills", "investigation"],
+    "blurb": "Field investigations for upper elementary learners that build science confidence and ID skills."
+  },
+  {
+    "id": "eco-navigators",
+    "name": "Eco Navigators",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["6-8"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["field", "stewardship", "systems"],
+    "blurb": "Middle school environmental STEM with navigation tools, sampling, and teamwork."
+  },
+  {
+    "id": "echo-sounders",
+    "name": "Echo Sounders",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["8-10"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["community-science", "data", "leadership"],
+    "blurb": "Inclusive field science and collaborative data collection that builds leadership readiness."
+  },
+  {
+    "id": "soundquest",
+    "name": "SoundQuest",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["8-10", "10-12"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["belonging", "leadership", "field"],
+    "blurb": "Queer-inclusive estuary science blending identity, leadership, and ecology."
+  },
+  {
+    "id": "sound-discovery",
+    "name": "Sound Discovery",
+    "pillar": "SoundPath Add-on",
+    "audience": "Youth",
+    "grades": ["9-12"],
+    "formats": ["add-on"],
+    "tags": ["add-on", "field"],
+    "blurb": "An add-on experience that deepens high school learning with additional investigation."
+  },
+  {
+    "id": "sound-scholars",
+    "name": "Sound Scholars",
+    "pillar": "ELI",
+    "audience": "Youth",
+    "grades": ["10-12"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["advanced", "research", "mentorship"],
+    "blurb": "Advanced fieldwork, research, mentorship, and science communication for grades 10–12."
+  },
+  {
+    "id": "sound-trekkers",
+    "name": "Sound Trekkers",
+    "pillar": "EAN",
+    "audience": "Adult",
+    "grades": ["Adult"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["adult", "community-science", "restoration"],
+    "blurb": "Adult immersion in estuarine ecology, systems thinking, and stewardship."
+  },
+  {
+    "id": "our-sound-selves",
+    "name": "Our Sound Selves",
+    "pillar": "EAN",
+    "audience": "Adult",
+    "grades": ["Adult"],
+    "formats": ["10-week", "4-week", "5-day", "1-day"],
+    "tags": ["adult", "reflection", "story"],
+    "blurb": "Science and reflection for adult wellbeing and deeper connection to place."
+  },
+  {
+    "id": "soundroots",
+    "name": "SoundRoots",
+    "pillar": "ESI",
+    "audience": "All Ages",
+    "grades": ["All Ages"],
+    "formats": [],
+    "tags": ["stewardship", "community", "all-ages"],
+    "blurb": "Community stewardship experiences designed for broad participation."
+  },
+  {
+    "id": "soundcore-exchange-network",
+    "name": "SoundCore Exchange Network",
+    "pillar": "ESI",
+    "audience": "13+",
+    "grades": ["13+"],
+    "formats": ["monthly"],
+    "tags": ["story", "civic-dialogue", "community"],
+    "blurb": "A monthly themed exchange connecting stories, stewardship, and community reflection."
+  }
+]
