@@ -85,56 +85,5 @@
         "1-day field trip": true
       },
       "notes": {}
-    },
-    {
-      "name": "Sound Trekkers",
-      "grades": "Adult",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
-      "notes": {}
-    },
-    {
-      "name": "Our Sound Selves",
-      "grades": "Adult",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
-      "notes": {}
-    },
-    {
-      "name": "SoundRoots",
-      "grades": "All Ages",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": false,
-        "4-week": false,
-        "5-day camp": false,
-        "1-day field trip": false
-      },
-      "notes": {}
-    },
-    {
-      "name": "SoundCore Exchange",
-      "grades": "13+",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": false,
-        "4-week": false,
-        "5-day camp": false,
-        "1-day field trip": false
-      },
-      "notes": {
-        "10-week": "Monthly"
-      }
     }
-  ]
-}
+    
