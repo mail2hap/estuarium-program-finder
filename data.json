@@ -14,7 +14,7 @@
         "5-day camp": false,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": {A playful introduction to estuarine exploration with caregivers. Activities include sensory games, water play, nature walks, and music tied to estuary sounds and rhythms. Designed to foster curiosity, sensory awareness, and rhythm-based learning as foundational skills for future scientific inquiry.}
     },
     {
       "name": "Little Sound Scouts",
@@ -26,7 +26,7 @@
         "5-day camp": true,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": {Early childhood nature adventures that focus on observation and wonder. Participants explore habitats, collect simple samples, draw findings, and learn basic ecological concepts through sensory-rich, hands-on play.}
     },
     {
       "name": "Sound Detectives",
@@ -38,7 +38,7 @@
         "5-day camp": true,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": {An inquiry-based estuarine investigation series where students collect water samples, identify organisms, map habitats, and conduct citizen science. Builds skills in observation, data collection, and ecological thinking.}
     },
     {
       "name": "Eco Navigators",
@@ -50,7 +50,7 @@
         "5-day camp": true,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": {Students learn environmental STEM through navigation tools, field sampling, and teamwork. Technology in Estuary Systems—introduces sensors, mobile apps, and data logging for real-time environmental monitoring.}
     },
     {
       "name": "Echo Sounders",
@@ -62,7 +62,7 @@
         "5-day camp": true,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": { Participants explore ecosystems, master field methods, and build community science projects all while reflecting on their identity and role in environmental stewardship.}
     },
     {
       "name": "SoundQuest",
@@ -74,7 +74,7 @@
         "5-day camp": true,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": {Queer-inclusive, place-based science experience that combines marine fieldwork, arts, leadership, and identity-intersection programming. Allows LGBTQIA+ youth to explore environmental science in an affirming community. Guest local leader Q/A at final 10-week session.}
     },
     {
       "name": "Sound Scholars",
@@ -86,56 +86,8 @@
         "5-day camp": true,
         "1-day field trip": true
       },
-      "notes": {}
+      "notes": {Connects students with mentors, career pathways, and advanced science experiences. This program includes field data collection, environmental justice discussions, and leadership training to prepare youth for future roles in science and advocacy. Integrates sovereignty and environmental justice, case studies, and guest speakers from local tribes, such as Since Time Immemorial stewards.}
     },
-    {
-      "name": "Sound Trekkers",
-      "grades": "Adult",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
-      "notes": {}
-    },
-    {
-      "name": "Our Sound Selves",
-      "grades": "Adult",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
-      "notes": {}
-    },
-    {
-      "name": "SoundRoots",
-      "grades": "All Ages",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": false,
-        "4-week": false,
-        "5-day camp": false,
-        "1-day field trip": false
-      },
-      "notes": {}
-    },
-    {
-      "name": "SoundCore Exchange",
-      "grades": "13+",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": false,
-        "4-week": false,
-        "5-day camp": false,
-        "1-day field trip": false
-      },
-      "notes": {
-        "10-week": "Monthly"
       }
     }
   ]
