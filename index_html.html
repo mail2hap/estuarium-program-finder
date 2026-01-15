@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Puget Sound Estuarium | Program Finder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <div class="brand__title" id="orgName">Puget Sound Estuarium</div>
+        <div class="brand__subtitle" id="pageTitle">K–12 Program Finder</div>
+      </div>
+      <div class="header-actions">
+        <a class="btn btn--primary" id="ctaEstimate" href="#estimate">Get an Estimate</a>
+        <a class="btn btn--ghost" id="ctaInquiry" href="#inquire">Request Booking</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <h1>Find the right program fast</h1>
+      <p>Select a grade band and format. You will see matching programs instantly.</p>
+    </section>
+
+    <section class="finder" aria-label="Program Finder">
+      <div class="filters" role="region" aria-label="Filters">
+        <div class="filters__row">
+          <div class="filter-block">
+            <div class="filter-label">Grade band</div>
+            <div class="chip-row" id="gradeChips" aria-label="Grade filters"></div>
+          </div>
+          <div class="filter-block">
+            <div class="filter-label">Format</div>
+            <div class="chip-row" id="formatChips" aria-label="Format filters"></div>
+          </div>
+        </div>
+
+        <div class="filters__row filters__row--secondary">
+          <label class="toggle">
+            <input type="checkbox" id="toggleCommunity" />
+            <span>Include community and adult programs</span>
+          </label>
+
+          <div class="search">
+            <label class="sr-only" for="searchBox">Search programs</label>
+            <input id="searchBox" type="search" placeholder="Search by program name" />
+          </div>
+
+          <button class="btn btn--small btn--ghost" id="clearBtn" type="button">Clear filters</button>
+        </div>
+
+        <div class="summary" id="summary" aria-live="polite"></div>
+      </div>
+
+      <div class="results" id="results" aria-label="Results list"></div>
+    </section>
+
+    <section class="howto">
+      <h2>How to book</h2>
+      <ol>
+        <li>Use the finder to confirm program fit.</li>
+        <li>Click "Get an Estimate" if you want a quick cost range.</li>
+        <li>Click "Request Booking" when you are ready for scheduling and logistics.</li>
+      </ol>
+      <p class="note">If you do not see a perfect match, request booking and ask for a custom configuration.</p>
+    </section>
+
+    <footer class="site-footer">
+      <div class="small">Explore • Connect • Inspire</div>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
