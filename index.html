@@ -247,7 +247,7 @@
       transform: translateY(-2px);
       box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
       border-color: rgba(156, 204, 255, 0.6);
-      background: 7daa6f;
+      background: #7daa6f;
     }
 
     .program-card:hover::before {
@@ -257,7 +257,7 @@
     .program-card.active {
       border-color: var(--accent);
       box-shadow: 0 0 0 1px rgba(127, 193, 255, 0.7), 0 14px 34px rgba(0, 0, 0, 0.7);
-      background: 244191;
+      background: #244191;
     }
 
     .badge-row {
@@ -827,7 +827,7 @@
       formats: ["10-week", "4-week", "5-day camp", "1-day intensive"],
       gradeLabel: "Grades 8–12 and LGBTQIA youth",
       shortDescription:
-        "Queer-inclusive estuary program combining field science, arts, and identity-affirming leadership.",
+        "Queer-inclusive estuary program combining field science, arts, belonging, and identity-affirming leadership.",
     },
     {
       id: "sound-scholars",
@@ -846,40 +846,7 @@
       shortDescription:
         "Advanced high school field research, science communication, and youth leadership in estuary science.",
     },
-    {
-      id: "sound-trekkers",
-      name: "Sound Trekkers",
-      gradeBand: "Adult",
-      pillar: "EAN",
-      standards: "Adult NGSS-aligned field science",
-      sessions: [
-        "10-week: Knowing the Sound, Caring for the Sound",
-        "4-week: Estuary Essentials",
-        "5-day: Field Science for Everyday People",
-        "1-day: Walk the Estuary, Know the Sound"
-      ],
-      formats: ["10-week", "4-week", "5-day mini course", "1-day intensive"],
-      gradeLabel: "Adults 18+",
-      shortDescription:
-        "Immersive adult field program for aspiring naturalists and community stewards.",
-    },
-    {
-      id: "our-sound-selves",
-      name: "Our Sound Selves",
-      gradeBand: "Adult",
-      pillar: "EAN",
-      standards: "NGSS crosscutting concepts; SEL for adults",
-      sessions: [
-        "10-week: The Estuary Within",
-        "4-week: Reflections in the Water",
-        "5-day: Echoes of the Estuary",
-        "1-day: The Sound Within"
-      ],
-      formats: ["10-week", "4-week", "5-day mini course", "1-day workshop"],
-      gradeLabel: "Adults 18+",
-      shortDescription:
-        "Reflective estuary program connecting ecological literacy with emotional wellbeing and story.",
-    },
+    
   ];
 
   const COST_CONFIG = {
@@ -899,8 +866,7 @@
       "8-10": 10,
       "9-12": 12,
       "10-12": 12,
-      Adult: 15,
-      default: 12,
+      default: 10,
     },
   };
 
