@@ -64,16 +64,14 @@
       },
       "notes": {}
     },
-    {
-      "name": "SoundQuest",
-      "grades": "8–10, 10–12",
-      "category": "School",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
+  {
+  "id": "soundquest",
+  "name": "SoundQuest",
+  "grades": ["8-10", "10-12"],
+  "formats": ["10-week", "4-week", "5-day", "1-day"],
+  "type": "K–12",
+  "blurb": "Queer-inclusive estuary science blending identity, leadership, and ecology."
+}
       "notes": {}
     },
     {
@@ -87,56 +85,5 @@
         "1-day field trip": true
       },
       "notes": {}
-    },
-    {
-      "name": "Sound Trekkers",
-      "grades": "Adult",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
-      "notes": {}
-    },
-    {
-      "name": "Our Sound Selves",
-      "grades": "Adult",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": true,
-        "4-week": true,
-        "5-day camp": true,
-        "1-day field trip": true
-      },
-      "notes": {}
-    },
-    {
-      "name": "SoundRoots",
-      "grades": "All Ages",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": false,
-        "4-week": false,
-        "5-day camp": false,
-        "1-day field trip": false
-      },
-      "notes": {}
-    },
-    {
-      "name": "SoundCore Exchange",
-      "grades": "13+",
-      "category": "Community/Adult",
-      "formats": {
-        "10-week": false,
-        "4-week": false,
-        "5-day camp": false,
-        "1-day field trip": false
-      },
-      "notes": {
-        "10-week": "Monthly"
-      }
     }
-  ]
-}
+    

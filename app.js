@@ -1,242 +1,219 @@
-/* Program Finder
-   - Loads data.json
-   - Provides grade + format filters and search
-   - Default view is school programs only
-*/
-
-const state = {
-  data: null,
-  selectedGrades: new Set(),
-  selectedFormats: new Set(),
-  includeCommunity: false,
-  search: ""
+const els = {
+  gradeChips: document.getElementById("gradeChips"),
+  formatChips: document.getElementById("formatChips"),
+  toggleCommunity: document.getElementById("toggleCommunity"),
+  searchBox: document.getElementById("searchBox"),
+  clearBtn: document.getElementById("clearBtn"),
+  summary: document.getElementById("summary"),
+  results: document.getElementById("results"),
 };
 
-const GRADE_PRESETS = [
-  { id: "PreK", label: "PreK", range: [-1, -1] },
-  { id: "K–1", label: "K–1", range: [0, 1] },
-  { id: "2–5", label: "2–5", range: [2, 5] },
-  { id: "6–8", label: "6–8", range: [6, 8] },
-  { id: "8–10", label: "8–10", range: [8, 10] },
-  { id: "10–12", label: "10–12", range: [10, 12] },
-];
+const state = {
+  grade: null,
+  format: null,
+  includeCommunity: false,
+  q: "",
+};
 
-const FORMAT_PRESETS = [
-  { id: "10-week", label: "10-week" },
-  { id: "4-week", label: "4-week" },
-  { id: "5-day camp", label: "5-day camp" },
-  { id: "1-day field trip", label: "1-day field trip" }
-];
+let rawPrograms = [];
 
-function el(id){ return document.getElementById(id); }
+const GRADE_ORDER = ["PreK-K","K-2","3-5","6-8","8-10","9-12","10-12","Adult","All Ages","13+"];
 
-function parseGradeIntervals(gradesText){
-  const s = (gradesText || "").toString().trim();
-  if(!s) return [];
-  const lower = s.toLowerCase();
-
-  if(lower.includes("all ages")) return [[-1, 99]];
-  if(lower === "adult") return [[18, 99]];
-  if(lower === "13+") return [[13, 99]];
-  if(lower === "prek") return [[-1, -1]];
-
-  // Split by comma
-  const parts = s.split(",").map(p => p.trim()).filter(Boolean);
-  const intervals = [];
-
-  for(const p of parts){
-    const pl = p.toLowerCase();
-    if(pl === "prek"){ intervals.push([-1,-1]); continue; }
-    // PreK–1
-    const mPrek = p.match(/prek\s*–\s*(\d{1,2})/i);
-    if(mPrek){
-      intervals.push([-1, parseInt(mPrek[1],10)]);
-      continue;
-    }
-    // K–1
-    const mK = p.match(/\bk\s*–\s*(\d{1,2})/i);
-    if(mK){
-      intervals.push([0, parseInt(mK[1],10)]);
-      continue;
-    }
-    // 2–5 etc
-    const mRange = p.match(/(\d{1,2})\s*–\s*(\d{1,2})/);
-    if(mRange){
-      intervals.push([parseInt(mRange[1],10), parseInt(mRange[2],10)]);
-      continue;
-    }
-    // Single number
-    const mSingle = p.match(/^\d{1,2}$/);
-    if(mSingle){
-      const g = parseInt(p,10);
-      intervals.push([g,g]);
-      continue;
-    }
-  }
-  return intervals;
+function asArray(v){
+  if (!v) return [];
+  if (Array.isArray(v)) return v.filter(Boolean);
+  return [v].filter(Boolean);
 }
 
-function intersects(intervals, targetRange){
-  for(const [a,b] of intervals){
-    const [x,y] = targetRange;
-    if(Math.max(a,x) <= Math.min(b,y)) return true;
+function pick(obj, keys){
+  for (const k of keys){
+    if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
   }
-  return false;
+  return undefined;
 }
 
-function buildChips(container, presets, selectedSet){
-  container.innerHTML = "";
-  for(const p of presets){
-    const btn = document.createElement("button");
-    btn.className = "chip";
-    btn.type = "button";
-    btn.textContent = p.label;
-    btn.setAttribute("aria-pressed", selectedSet.has(p.id) ? "true" : "false");
-    btn.addEventListener("click", () => {
-      if(selectedSet.has(p.id)) selectedSet.delete(p.id);
-      else selectedSet.add(p.id);
-      render();
-    });
-    container.appendChild(btn);
-  }
+function normalizeProgram(p){
+  const name = pick(p, ["name","programName","title"]) || "Untitled program";
+  const blurb = pick(p, ["blurb","summary","description","shortDescription"]) || "";
+  const grades = asArray(pick(p, ["grades","gradeBands","gradeBand","grade_band"]));
+  const formats = asArray(pick(p, ["formats","format","deliveryFormats","delivery"]));
+  const type = (pick(p, ["type","audience","audienceType","category"]) || "").toString();
+
+  // Decide if program is “community/adult” in a flexible way
+  const isCommunity = (
+    /adult|community|public|member/i.test(type) ||
+    grades.some(g => /adult|all ages|13\+/i.test(String(g)))
+  );
+
+  return {
+    id: pick(p, ["id","slug"]) || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    name,
+    blurb,
+    grades: grades.map(String),
+    formats: formats.map(String),
+    type: type || (isCommunity ? "Community/Adult" : "K–12"),
+    isCommunity,
+    // Optional URLs if you have them in data.json
+    estimateUrl: pick(p, ["estimateUrl","estimate_url"]),
+    inquiryUrl: pick(p, ["inquiryUrl","inquiry_url"]),
+  };
 }
 
-function programMatchesFilters(prog){
-  // Category gate
-  if(!state.includeCommunity && prog.category !== "School") return false;
-
-  // Search
-  if(state.search){
-    const term = state.search.toLowerCase();
-    if(!prog.name.toLowerCase().includes(term)) return false;
-  }
-
-  // Formats
-  if(state.selectedFormats.size > 0){
-    for(const f of state.selectedFormats){
-      if(!prog.formats || !prog.formats[f]) return false;
+function uniqSorted(arr){
+  const set = new Set(arr.filter(Boolean));
+  const out = [...set];
+  out.sort((a,b) => {
+    const ai = GRADE_ORDER.indexOf(a);
+    const bi = GRADE_ORDER.indexOf(b);
+    if (ai !== -1 || bi !== -1){
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
     }
-  }
-
-  // Grades
-  if(state.selectedGrades.size > 0){
-    const intervals = parseGradeIntervals(prog.grades);
-    // Any selected grade chip can match
-    let ok = false;
-    for(const chipId of state.selectedGrades){
-      const preset = GRADE_PRESETS.find(g => g.id === chipId);
-      if(!preset) continue;
-      if(intersects(intervals, preset.range)) { ok = true; break; }
-    }
-    if(!ok) return false;
-  }
-
-  return true;
+    return a.localeCompare(b);
+  });
+  return out;
 }
 
-function formatTags(prog){
-  const tags = [];
-  if(prog.grades) tags.push({text:`Grades: ${prog.grades}`, cls:"tag tag--grade"});
-  const fmt = [];
-  for(const p of FORMAT_PRESETS){
-    if(prog.formats && prog.formats[p.id]) fmt.push(p.label);
-  }
-  if(fmt.length){
-    for(const x of fmt) tags.push({text:x, cls:"tag tag--format"});
-  } else {
-    // Some non-X formats (like Monthly)
-    const notes = prog.notes ? Object.values(prog.notes).filter(Boolean) : [];
-    if(notes.length){
-      tags.push({text:`Format: ${notes.join(", ")}`, cls:"tag tag--format"});
-    }
-  }
-  return tags;
+function chip(label, pressed, onClick){
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "chip";
+  b.textContent = label;
+  b.setAttribute("aria-pressed", pressed ? "true" : "false");
+  b.addEventListener("click", onClick);
+  return b;
 }
 
-function renderResults(list){
-  const resultsEl = el("results");
-  resultsEl.innerHTML = "";
+function renderFilters(programs){
+  const grades = uniqSorted(programs.flatMap(p => p.grades));
+  const formats = uniqSorted(programs.flatMap(p => p.formats));
 
-  if(list.length === 0){
+  els.gradeChips.innerHTML = "";
+  grades.forEach(g => {
+    els.gradeChips.appendChild(
+      chip(g, state.grade === g, () => {
+        state.grade = (state.grade === g) ? null : g;
+        render();
+      })
+    );
+  });
+
+  els.formatChips.innerHTML = "";
+  formats.forEach(f => {
+    els.formatChips.appendChild(
+      chip(f, state.format === f, () => {
+        state.format = (state.format === f) ? null : f;
+        render();
+      })
+    );
+  });
+}
+
+function matchesQuery(p){
+  if (!state.q) return true;
+  const hay = [p.name, p.blurb, p.type, ...p.grades, ...p.formats].join(" ").toLowerCase();
+  return hay.includes(state.q.toLowerCase());
+}
+
+function filterPrograms(programs){
+  return programs.filter(p => {
+    if (!state.includeCommunity && p.isCommunity) return false;
+    if (state.grade && !p.grades.includes(state.grade)) return false;
+    if (state.format && !p.formats.includes(state.format)) return false;
+    if (!matchesQuery(p)) return false;
+    return true;
+  });
+}
+
+function card(p){
+  const aEstimate = (p.estimateUrl || "#estimate");
+  const aInquiry = (p.inquiryUrl || "#inquire");
+
+  const el = document.createElement("article");
+  el.className = "card";
+  el.innerHTML = `
+    <h3>${escapeHtml(p.name)}</h3>
+    <p>${escapeHtml(p.blurb || "")}</p>
+    <div class="meta">
+      ${(p.type ? `<span class="pill pill--type">${escapeHtml(p.type)}</span>` : "")}
+      ${p.grades.map(g => `<span class="pill pill--grade">${escapeHtml(g)}</span>`).join("")}
+      ${p.formats.map(f => `<span class="pill pill--format">${escapeHtml(f)}</span>`).join("")}
+    </div>
+    <div class="actions">
+      <a class="btn btn--primary" href="${escapeAttr(aEstimate)}">Get an Estimate</a>
+      <a class="btn btn--ghost" href="${escapeAttr(aInquiry)}">Request Booking</a>
+    </div>
+  `;
+  return el;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+function render(){
+  // Use full set for filters, but optionally restrict if community is off
+  const universe = state.includeCommunity ? rawPrograms : rawPrograms.filter(p => !p.isCommunity);
+  renderFilters(universe);
+
+  const list = filterPrograms(rawPrograms);
+
+  const parts = [];
+  if (state.grade) parts.push(`Grade: ${state.grade}`);
+  if (state.format) parts.push(`Format: ${state.format}`);
+  if (state.q) parts.push(`Search: "${state.q}"`);
+  if (state.includeCommunity) parts.push(`Including community/adult`);
+
+  els.summary.textContent = `${list.length} match${list.length === 1 ? "" : "es"}${parts.length ? " • " + parts.join(" • ") : ""}`;
+
+  els.results.innerHTML = "";
+  if (list.length === 0){
     const empty = document.createElement("div");
     empty.className = "card";
-    empty.innerHTML = `<div class="card__title">No matches</div>
-      <div class="details">Try clearing filters or selecting a broader grade band.</div>`;
-    resultsEl.appendChild(empty);
+    empty.innerHTML = `<h3>No matches</h3><p>Try clearing a filter or using a broader search.</p>`;
+    els.results.appendChild(empty);
     return;
   }
 
-  for(const prog of list){
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const tags = formatTags(prog).map(t => `<span class="${t.cls}">${t.text}</span>`).join("");
-
-    card.innerHTML = `
-      <div class="card__top">
-        <div>
-          <h3 class="card__title">${prog.name}</h3>
-          <div class="tag-row">${tags}</div>
-        </div>
-        <div class="card__actions">
-          <a href="${state.data.ctaEstimateUrl}">Get estimate</a>
-          <a href="${state.data.ctaInquiryUrl}">Request booking</a>
-        </div>
-      </div>
-      <div class="details">
-        ${prog.category === "School" ? "School program." : "Community or adult program."}
-      </div>
-    `;
-    resultsEl.appendChild(card);
-  }
+  list.forEach(p => els.results.appendChild(card(p)));
 }
 
-function render(){
-  buildChips(el("gradeChips"), GRADE_PRESETS, state.selectedGrades);
-  buildChips(el("formatChips"), FORMAT_PRESETS, state.selectedFormats);
+function clearAll(){
+  state.grade = null;
+  state.format = null;
+  state.q = "";
+  state.includeCommunity = false;
 
-  el("toggleCommunity").checked = state.includeCommunity;
-  el("searchBox").value = state.search;
-
-  const filtered = state.data.programs.filter(programMatchesFilters);
-
-  el("summary").textContent =
-    `${filtered.length} program${filtered.length === 1 ? "" : "s"} shown` +
-    (state.selectedGrades.size ? ` | Grades filter: ${Array.from(state.selectedGrades).join(", ")}` : "") +
-    (state.selectedFormats.size ? ` | Format filter: ${Array.from(state.selectedFormats).join(", ")}` : "");
-
-  renderResults(filtered);
-}
-
-async function init(){
-  const res = await fetch("data.json");
-  state.data = await res.json();
-
-  el("orgName").textContent = state.data.orgName || "Puget Sound Estuarium";
-  el("pageTitle").textContent = state.data.pageTitle || "K–12 Program Finder";
-
-  el("ctaEstimate").href = state.data.ctaEstimateUrl || "#estimate";
-  el("ctaInquiry").href = state.data.ctaInquiryUrl || "#inquire";
-
-  el("toggleCommunity").addEventListener("change", (e) => {
-    state.includeCommunity = !!e.target.checked;
-    render();
-  });
-
-  el("searchBox").addEventListener("input", (e) => {
-    state.search = e.target.value || "";
-    render();
-  });
-
-  el("clearBtn").addEventListener("click", () => {
-    state.selectedGrades.clear();
-    state.selectedFormats.clear();
-    state.search = "";
-    state.includeCommunity = false;
-    render();
-  });
+  els.searchBox.value = "";
+  els.toggleCommunity.checked = false;
 
   render();
 }
 
-init();
+async function init(){
+  const res = await fetch("data.json", { cache: "no-store" });
+  const data = await res.json();
+
+  const list = Array.isArray(data) ? data : (data.programs || []);
+  rawPrograms = list.map(normalizeProgram);
+
+  // Controls
+  els.toggleCommunity.addEventListener("change", (e) => {
+    state.includeCommunity = !!e.target.checked;
+    render();
+  });
+
+  els.searchBox.addEventListener("input", (e) => {
+    state.q = e.target.value.trim();
+    render();
+  });
+
+  els.clearBtn.addEventListener("click", clearAll);
+
+  render();
+}
+
+init().catch(err => {
+  els.summary.textContent = "Failed to load data.json";
+  console.error(err);
+});
